@@ -31,20 +31,20 @@ auth.onAuthStateChanged(function(user)
             gameprep();
         }
 
-        if (filename == 'gameselect.html')
-        {
-            checkqueued();
-            document.getElementById('userimage').src = user.photoURL
-            document.getElementById('userinfo').innerHTML = user.displayName;
-        }
-        return firebase.database().ref('/users/' + user.uid + '/registered').once('value').then(function(snapshot) {
-            if (!snapshot.val())
+        return database.ref('users/' + user.uid + '/registered').once('value').then(function(snapshot) {
+            if (snapshot.val() == null)
             {
                 database.ref('users/' + user.uid).update({
                     username: 'New Player',
                     online: false,
                     registered: true
                 });
+            }
+            if (filename == 'gameselect.html')
+            {
+                checkqueued();
+                document.getElementById('userimage').src = user.photoURL
+                document.getElementById('userinfo').innerHTML = user.displayName;
             }
         });
     }
@@ -240,7 +240,7 @@ database.ref('rooms/').on('value', function(snapshot) {
         }
         else
         {
-            document.getElementById('coin').src = null;
+            document.getElementById('coin').src = 'white.jpeg';
         }
         return database.ref('rooms/' + room + '/turn').once('value').then(function(snapshot)
         {
