@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" id="document">
+<head>
+    <meta charset="UTF-8">
+    <title>Shane's Risky Game</title>
+</head>
+
+<div id="welcomepage">
+    <div id="welcomelogin">
+        <h1 id="title">Shane's</h1>
+        <h1 id="title">Risky Game</h1>
+        <button id="login" onclick="googledirect()">Sign in</button>
+    </div>
+    <div id="welcomeinstructions">
+        <p id="instructiontitle"><b>How to Play</b></p>
+        <p id="instructions">Each player begins taking turns flipping a coin until one of them gets heads.  Once a player gets heads,they enter the bonus round, where they must flip another heads to win the game.  If they get a tails, they exit the bonus round, and the other player takes their turn as usual, continuing the game.</p>
+    </div>
+</div>
+
+
+<body>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.2.3/firebase.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyCj5lL0NvEdkOAfv_wcip7Hb95KcZz-tpc",
+        authDomain: "shane-s-risky-game.firebaseapp.com",
+        databaseURL: "https://shane-s-risky-game.firebaseio.com",
+        projectId: "shane-s-risky-game",
+        storageBucket: "shane-s-risky-game.appspot.com",
+        messagingSenderId: "289562568492",
+        appId: "1:289562568492:web:b1f7d56de79647cb672e89"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({
+        prompt: 'select_account'
+    });
+
+</script>
+</body>
+</html>
+<script src="index.js"></script>
+
+<link rel="stylesheet" href="index.css">

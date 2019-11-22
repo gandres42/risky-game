@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" id="document">
+<head>
+    <meta charset="UTF-8">
+    <title>Shane's Risky Game</title>
+</head>
+<body>
+
+<div id="gameselect">
+    <div id="welcomelogout">
+        <img id="userimage">
+        <p id="username">Username:</p>
+        <input id="changeusername" onchange="changeusername()">
+        <button id="queue" onclick="queue()">Online Game</button>
+        <button id="logout" onclick="logout()">Log out</button>
+    </div>
+    <div id="welcomeinstructions">
+        <p><b>Note from the creator</b></p>
+        <p id="notes">
+            Welcome to the first verison of Shane's Risky Game!
+            This is very much an early release, and as a result bugs and inefficiency are likely.  To help in developing this game, make sure to fill out a bug report for any issues you find.
+            <br id="break">
+            I will keep this area up to date with any information about the game, or any new features added to the game.
+            <br id="break">
+            In the meantime, enjoy the game, and flip well!
+        </p>
+    </div>
+
+</div>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.2.3/firebase.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyCj5lL0NvEdkOAfv_wcip7Hb95KcZz-tpc",
+        authDomain: "shane-s-risky-game.firebaseapp.com",
+        databaseURL: "https://shane-s-risky-game.firebaseio.com",
+        projectId: "shane-s-risky-game",
+        storageBucket: "shane-s-risky-game.appspot.com",
+        messagingSenderId: "289562568492",
+        appId: "1:289562568492:web:b1f7d56de79647cb672e89"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({
+        prompt: 'select_account'
+    });
+
+</script>
+</body>
+</html>
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" rel="stylesheet">
+<script src="index.js"></script>
+<link rel="stylesheet" href="index.css">

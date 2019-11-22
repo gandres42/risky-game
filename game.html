@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" id="document">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="maingame">
+    <h1 id="p1name">p1</h1>
+    <h1 id="p2name">p2</h1>
+    <img id="coin" src="heads.png">
+    <p id="currentturn"></p>
+
+    <div id="buttons">
+        <button id="coinflip" onclick="coinflip()">Flip Coin</button>
+        <button id="leavegame" onclick="leavegame()">Leave Room</button>
+    </div>
+</div>
+<div id="playerleftbackground">
+
+</div>
+<div id="playerleft">
+    <p id="playerleftmessage">The opponent has left the room</p>
+    <button id="leavegame" onclick="leavegame()">Leave Room</button>
+</div>
+
+<div id="playerwon">
+    <p id="playerwonmessage"></p>
+    <button id="leavegame" onclick="leavegame()">Leave Room</button>
+    <button id="playagain" onclick="again()">Play Again</button>
+</div>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.2.3/firebase.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyCj5lL0NvEdkOAfv_wcip7Hb95KcZz-tpc",
+        authDomain: "shane-s-risky-game.firebaseapp.com",
+        databaseURL: "https://shane-s-risky-game.firebaseio.com",
+        projectId: "shane-s-risky-game",
+        storageBucket: "shane-s-risky-game.appspot.com",
+        messagingSenderId: "289562568492",
+        appId: "1:289562568492:web:b1f7d56de79647cb672e89"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({
+        prompt: 'select_account'
+    });
+</script>
+</body>
+</html>
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game.css">
+<script src="index.js"></script>

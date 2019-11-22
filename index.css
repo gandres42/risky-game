@@ -1,0 +1,187 @@
+#document
+{
+    background-image: url("background.jpg");
+    background-repeat: no-repeat;
+    -webkit-background-size: auto;
+    background-size: auto;
+}
+
+#login
+{
+    width: 180px;
+    height: 40px;
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 2px;
+    background: white;
+    -webkit-transition-duration: .5s;
+}
+
+#logout
+{
+    margin-top: 10px;
+    width: 180px;
+    height: 40px;
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 2px;
+    background: white;
+    -webkit-transition-duration: .5s;
+}
+
+#logout:hover
+{
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 2px;
+    background: lightgrey;
+    -webkit-transition-duration: .5s;
+}
+
+#changeusername
+{
+    width: 168px;
+    height: 35px;
+    border: solid;
+    border-width: 1px;
+    border-radius: 2px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-left: 10px;
+}
+
+#login:hover
+{
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 2px;
+    background: lightgrey;
+    -webkit-transition-duration: .5s;
+}
+
+#welcomepage
+{
+    width: 600px;
+    height: 400px;
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 3px;
+    background: white;
+    margin: 0px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#gameselect
+{
+    width: 600px;
+    height: 400px;
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 3px;
+    background: white;
+    margin: 0px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#title
+{
+    font-family: "Roboto Mono", monospace;
+}
+#welcomelogin
+{
+    position: absolute;
+    text-align: center;
+    display: inline;
+    width: 230px;
+    height: inherit;
+    border-right: solid;
+    border-width: 1px;
+}
+
+#welcomelogout
+{
+    position: absolute;
+    text-align: center;
+    display: inline;
+    width: 230px;
+    height: inherit;
+    border-right: solid;
+    border-width: 1px;
+}
+
+#welcomeinstructions
+{
+    font-family: "Roboto Mono";
+    right: 10px;
+    width: 350px;
+    height: inherit;
+    position: absolute;
+}
+#instructiontitle
+{
+    text-align: center;
+}
+
+#queue
+{
+    width: 180px;
+    height: 40px;
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 2px;
+    background: white;
+    -webkit-transition-duration: .5s;
+    margin-top: 5px;
+}
+
+#queue:hover
+{
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 2px;
+    background: lightgrey;
+    -webkit-transition-duration: .5s;
+}
+
+#username
+{
+    font-family: "Roboto Mono";
+    margin-top: 5px;
+    margin-bottom: 0px;
+    margin-left: 25px;
+    text-align: left;
+    font-size: small;
+}
+
+#notes
+{
+    line-height: 25px;
+}
+
+#userimage
+{
+    height: 100px;
+    width: 100px;
+    border-radius: 50px;
+    margin-top: 60px;
+    border: solid;
+    border-width: 1px;
+}
+#instructions
+{
+    line-height: 25px
+}
