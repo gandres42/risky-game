@@ -42,6 +42,7 @@
     transform: translate(-50%, -50%);
     width: 300px;
     height: 300px;
+    transition: left 1s;
 }
 
 #currentturn
@@ -85,7 +86,7 @@
     border-color: black;
     border-width: 1px;
     border-radius: 3px;
-    z-index: 50;
+    z-index: 10;
     width: 400px;
     height: 130px;
     text-align: center;
@@ -103,7 +104,7 @@
     border-color: black;
     border-width: 1px;
     border-radius: 3px;
-    z-index: 50;
+    z-index: 10;
     width: 400px;
     height: 130px;
     text-align: center;

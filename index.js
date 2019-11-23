@@ -241,6 +241,7 @@ database.ref('rooms/').on('value', function(snapshot) {
         else
         {
             document.getElementById('coin').src = 'white.jpeg';
+            document.getElementById('coin').style.left = '50%';
         }
         return database.ref('rooms/' + room + '/turn').once('value').then(function(snapshot)
         {
@@ -253,11 +254,15 @@ database.ref('rooms/').on('value', function(snapshot) {
             {
                 document.getElementById('p1name').style.color = 'green';
                 document.getElementById('p2name').style.color = 'black';
+                document.getElementById('coin').style.left = '20%';
             }
             else if (snapshot.val() == 'p2')
             {
                 document.getElementById('p2name').style.color = 'green';
                 document.getElementById('p1name').style.color = 'black';
+                document.getElementById('coin').style.left = '80%';
+
+
             }
 
             if (snapshot.val() == player)
