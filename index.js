@@ -76,14 +76,14 @@ function queue()
 }
 
 database.ref('queue').on('value', function(snapshot) {
-    var chat = Object.values(snapshot.val());
-    if (chat[0] == currentuser.uid && chat.length >= 2)
+    var queue = Object.values(snapshot.val());
+    if (queue[0] == currentuser.uid && queue.length >= 2)
     {
         return database.ref('roomid').once('value').then(function(snapshot)
         {
-            database.ref('rooms/' + snapshot.val()).update({
-                [chat[0]]: 'p1',
-                [chat[1]]: 'p2',
+            database.ref('rooms/' + snapshot.val()).set({
+                [auth.currentUser.uid]: 'p1',
+                [queue[1]]: 'p2',
                 turn: 'p1',
                 streak: 0
             });
