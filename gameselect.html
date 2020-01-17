@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" id="document">
+<link rel="stylesheet" href="index.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" rel="stylesheet">
 <head>
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
@@ -13,17 +15,27 @@
         <p id="username">Username:</p>
         <input id="changeusername" onchange="changeusername()">
         <button id="queue" onclick="queue()">Online Game</button>
+        <button id="offline" onclick="localgame()">Offline Multiplayer</button>
+        <button id="single" onclick="singlegame()">Single Player</button>
         <button id="logout" onclick="logout()">Log out</button>
     </div>
     <div id="welcomeinstructions">
-        <p><b>Note from the creator</b></p>
+        <p><b>The Better Alone Update</b></p>
+        First Major Update Since Release!
         <p id="notes">
-            Welcome to the first verison of Shane's Risky Game!
-            This is very much a first release, so to help out make sure to fill out a <a href="https://docs.google.com/forms/d/e/1FAIpQLSew6ExASivfRvgczCDBPFvTmpgbBE89p0cHaRtcOnxLjAcU_w/viewform?usp=sf_link" target="_blank">bug report</a> for any issues you encounter.
-            <br id="break">
-            I will keep this area up to date with any information about the game and any new features on the way.
-            <br id="break">
-            In the meantime, enjoy the game, and flip well!
+            -Added a single player and offline local multiplayer games
+            <br id="notes">
+            -Visual changes to the game menus
+            <br id="notes">
+            -Added coin flip animation
+            <br id="notes">
+            -Fixed issues with leaving the match that caused random values to be entered into the database
+            <br id="notes">
+            -General bug fixes
+            <br id="notes">
+            As always, please make sure to fill out the
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSew6ExASivfRvgczCDBPFvTmpgbBE89p0cHaRtcOnxLjAcU_w/viewform?usp=sf_link" target="_blank">bug report</a>
+            with any errors you encounter.
         </p>
     </div>
 
@@ -56,6 +68,6 @@
 </script>
 </body>
 </html>
-<link href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" rel="stylesheet">
+
 <script src="index.js"></script>
-<link rel="stylesheet" href="index.css">
+

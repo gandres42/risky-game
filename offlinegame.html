@@ -1,26 +1,37 @@
 <!DOCTYPE html>
 <html lang="en" id="document">
-<link rel="stylesheet" href="index.css">
 <head>
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <title>Shane's Risky Game</title>
 </head>
+<body>
+<div id="maingame">
+    <h1 id="p1name">p1</h1>
+    <h1 id="p2name">p2</h1>
+    <img id="coin" src="heads.png">
+    <p id="currentturn"></p>
 
-<div id="welcomepage">
-    <div id="welcomelogin">
-        <h1 id="title">Shane's</h1>
-        <h1 id="title">Risky Game</h1>
-        <button id="login" onclick="googledirect()">Sign in</button>
-    </div>
-    <div id="welcomeinstructions">
-        <p id="instructiontitle"><b>How to Play</b></p>
-        <p id="instructions">Each player begins taking turns flipping a coin until one of them gets heads.  Once a player gets heads,they enter the bonus round, where they must flip another heads to win the game.  If they get a tails, they exit the bonus round, and the other player takes their turn as usual, continuing the game.</p>
+    <div id="buttons">
+        <button id="coinflip1" onclick="offlineflip()">Flip Coin P1</button>
+        <button id="leavegame" onclick="leavelocal()">Leave Room</button>
+        <button id="coinflip2" onclick="offlineflip()">Flip Coin P2</button>
     </div>
 </div>
+<div id="playerleftbackground">
 
+</div>
+<div id="playerleft">
+    <p id="playerleftmessage">The opponent has left the room</p>
+    <button id="leavegame" onclick="">Leave Room</button>
+</div>
 
-<body>
+<div id="playerwon">
+    <p id="playerwonmessage"></p>
+    <button id="leavegame" onclick="leavelocal()">Leave Room</button>
+    <button id="playagain" onclick="resetlocal()">Play Again</button>
+</div>
+
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase.js"></script>
 
@@ -44,8 +55,9 @@
     provider.setCustomParameters({
         prompt: 'select_account'
     });
-
 </script>
 </body>
 </html>
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game.css">
 <script src="index.js"></script>

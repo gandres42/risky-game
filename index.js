@@ -3,6 +3,9 @@ var database = firebase.database();
 var currentuser;
 var room;
 var player;
+var offlineturn = 1;
+var offlinestreak = 0;
+var username;
 
 function googledirect()
 {
@@ -19,9 +22,9 @@ auth.onAuthStateChanged(function(user)
     if(user) {
         const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
 
-        if (filename != 'game.html')
+        if (filename != 'game.html' && filename != 'offlinegame.html' && filename != 'singlegame.html')
         {
-            if (filename != 'gameselect.html' && filename != 'game.html') {
+            if (filename != 'gameselect.html') {
                 window.location = "gameselect.html";
             }
             currentuser = user;
@@ -29,6 +32,10 @@ auth.onAuthStateChanged(function(user)
         else if (filename == 'game.html')
         {
             gameprep();
+        }
+        else if (filename == "singlegame.html")
+        {
+            resetlocal();
         }
 
         return database.ref('users/' + user.uid + '/registered').once('value').then(function(snapshot) {
@@ -123,7 +130,7 @@ database.ref('users/').on('value', function(snapshot) {
             });
         });
     }
-    else if (Object.values(snapshot.val())[Object.keys(snapshot.val()).indexOf(auth.currentUser.uid)].online == false && filename != 'gameselect.html')
+    else if (Object.values(snapshot.val())[Object.keys(snapshot.val()).indexOf(auth.currentUser.uid)].online == false && filename != 'gameselect.html' && filename != 'offlinegame.html' && filename != 'singlegame.html')
     {
         window.location = 'gameselect.html';
     }
@@ -143,6 +150,9 @@ function leavegame()
             database.ref('users/' + auth.currentUser.uid).update({
                 online: false
             });
+            database.ref('coin').remove();
+            database.ref('streak').remove();
+            database.ref('turn').remove();
         });
     });
 }
@@ -228,79 +238,85 @@ function rand() {
 }
 
 database.ref('rooms/').on('value', function(snapshot) {
-    return database.ref('rooms/' + room + '/coin').once('value').then(function(snapshot)
+    const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
+    if (filename != 'offlinegame.html' && filename != 'singlegame.html')
     {
-        if (snapshot.val() == 1)
+        return database.ref('rooms/' + room + '/coin').once('value').then(function(snapshot)
         {
-            document.getElementById('coin').src = 'heads.png';
-        }
-        else if (snapshot.val() == 0)
-        {
-            document.getElementById('coin').src = 'tails.png';
-        }
-        else
-        {
-            document.getElementById('coin').src = 'white.jpeg';
-            document.getElementById('coin').style.left = '50%';
-        }
-        return database.ref('rooms/' + room + '/turn').once('value').then(function(snapshot)
-        {
-            if (snapshot.val() == null)
+            if (snapshot.val() == 1)
             {
-                document.getElementById('playerleftbackground').style.display = 'inline';
-                document.getElementById('playerleft').style.display = 'inline';
+                document.getElementById('coin').src = 'heads.png';
             }
-            else if (snapshot.val() == 'p1')
+            else if (snapshot.val() == 0)
             {
-                document.getElementById('p1name').style.color = 'green';
-                document.getElementById('p2name').style.color = 'black';
-                document.getElementById('coin').style.left = '20%';
-            }
-            else if (snapshot.val() == 'p2')
-            {
-                document.getElementById('p2name').style.color = 'green';
-                document.getElementById('p1name').style.color = 'black';
-                document.getElementById('coin').style.left = '80%';
-
-
-            }
-
-            if (snapshot.val() == player)
-            {
-                document.getElementById('coinflip').style.background = 'white';
-                document.getElementById('coinflip').style.color = 'black';
+                document.getElementById('coin').src = 'tails.png';
             }
             else
             {
-                document.getElementById('coinflip').style.background = '#C0392B';
-                document.getElementById('coinflip').style.color = 'white';
+                document.getElementById('coin').src = 'white.jpeg';
+                document.getElementById('coin').style.left = '50%';
             }
-
-            return  database.ref('rooms/' + room + '/winner').once('value').then(function(snapshot)
+            return database.ref('rooms/' + room + '/turn').once('value').then(function(snapshot)
             {
-                if (snapshot.val() != null)
+                if (snapshot.val() == null)
                 {
-
                     document.getElementById('playerleftbackground').style.display = 'inline';
-                    document.getElementById('playerwon').style.display = 'inline';
-                    document.getElementById('playerwonmessage').innerHTML = snapshot.val() + ' has won!';
+                    document.getElementById('playerleft').style.display = 'inline';
+                }
+                else if (snapshot.val() == 'p1')
+                {
+                    document.getElementById('p1name').style.color = 'green';
+                    document.getElementById('p2name').style.color = 'black';
+                    document.getElementById('coin').style.left = '20%';
+                    document.getElementById('coin').style.width = '0px';
+                    setTimeout(widthback, 500)
+                }
+                else if (snapshot.val() == 'p2')
+                {
+                    document.getElementById('p2name').style.color = 'green';
+                    document.getElementById('p1name').style.color = 'black';
+                    document.getElementById('coin').style.left = '80%';
+                    document.getElementById('coin').style.width = '0px';
+                    setTimeout(widthback, 500)
+                }
+
+                if (snapshot.val() == player)
+                {
+                    document.getElementById('coinflip').style.background = 'white';
+                    document.getElementById('coinflip').style.color = 'black';
                 }
                 else
                 {
-                    document.getElementById('playerleftbackground').style.display = 'none';
-                    document.getElementById('playerwon').style.display = 'none';
+                    document.getElementById('coinflip').style.background = '#C0392B';
+                    document.getElementById('coinflip').style.color = 'white';
                 }
 
-                return  database.ref('rooms/' + room + '/again').once('value').then(function(snapshot)
+                return  database.ref('rooms/' + room + '/winner').once('value').then(function(snapshot)
                 {
-                    if (snapshot.val() == 2)
+                    if (snapshot.val() != null)
                     {
-                        resetgame();
+
+                        document.getElementById('playerleftbackground').style.display = 'inline';
+                        document.getElementById('playerwon').style.display = 'inline';
+                        document.getElementById('playerwonmessage').innerHTML = snapshot.val() + ' has won!';
                     }
+                    else
+                    {
+                        document.getElementById('playerleftbackground').style.display = 'none';
+                        document.getElementById('playerwon').style.display = 'none';
+                    }
+
+                    return  database.ref('rooms/' + room + '/again').once('value').then(function(snapshot)
+                    {
+                        if (snapshot.val() == 2)
+                        {
+                            resetgame();
+                        }
+                    });
                 });
             });
         });
-    });
+    }
 });
 
 function changeusername()
@@ -372,3 +388,191 @@ function again()
     });
 
 }
+
+function localgame()
+{
+    window.location = "offlinegame.html";
+}
+
+function singlegame()
+{
+    window.location = "singlegame.html";
+}
+
+function leavelocal()
+{
+    window.location = "gameselect.html";
+}
+
+function offlineflip()
+{
+    var flip = rand();
+    if (offlineturn == 1)
+    {
+        document.getElementById('p1name').style.color = 'green';
+        document.getElementById('p2name').style.color = 'black';
+        document.getElementById('coin').style.left = '20%';
+        document.getElementById('coin').style.width = '0px';
+        setTimeout(widthback, 550)
+        if (flip == 1)
+        {
+            document.getElementById("coin").src = "heads.png";
+            if (offlinestreak == 1)
+            {
+                offlinewinner(offlineturn);
+            }
+            else
+            {
+                offlinestreak = 1;
+                offlineturn = 1;
+            }
+        }
+        else
+        {
+            document.getElementById("coin").src = "tails.png";
+            offlinestreak = 0;
+            offlineturn = 2;
+            document.getElementById('coinflip1').style.background = '#C0392B';
+            document.getElementById('coinflip1').style.color = 'white';
+            document.getElementById('coinflip2').style.background = 'white';
+            document.getElementById('coinflip2').style.color = 'black';
+            document.getElementById('coinflip1').disabled = true;
+            document.getElementById('coinflip2').disabled = false;
+        }
+    }
+    else if (offlineturn == 2)
+    {
+        document.getElementById('p1name').style.color = 'black';
+        document.getElementById('p2name').style.color = 'green';
+        document.getElementById('coin').style.left = '80%';
+        document.getElementById('coin').style.width = '0px';
+        setTimeout(widthback, 550)
+        if (flip == 1)
+        {
+            document.getElementById("coin").src = "heads.png";
+            if (offlinestreak == 1)
+            {
+                offlinewinner(offlineturn);
+            }
+            else
+            {
+                offlinestreak = 1;
+                offlineturn = 2
+            }
+        }
+        else
+        {
+            document.getElementById("coin").src = "tails.png";
+            offlinestreak = 0;
+            offlineturn = 1;
+            document.getElementById('coinflip2').style.background = '#C0392B';
+            document.getElementById('coinflip2').style.color = 'white';
+            document.getElementById('coinflip1').style.background = 'white';
+            document.getElementById('coinflip1').style.color = 'black';
+            document.getElementById('coinflip2').disabled = true;
+            document.getElementById('coinflip1').disabled = false;
+        }
+    }
+}
+
+function offlinewinner(winner)
+{
+    document.getElementById('playerleftbackground').style.display = 'inline';
+    document.getElementById('playerwon').style.display = 'inline';
+    document.getElementById('playerwonmessage').innerHTML = 'Player ' + winner + ' has won!';
+}
+
+function resetlocal()
+{
+    return database.ref('users/' + auth.currentUser.uid + '/username').once('value').then(function(snapshot)
+    {
+        document.getElementById('p1name').innerHTML = snapshot.val();
+        document.getElementById('playerleftbackground').style.display = 'none';
+        document.getElementById('playerwon').style.display = 'none';
+        document.getElementById('coinflip').style.background = 'white';
+        document.getElementById('coinflip').style.color = 'black';
+        document.getElementById('coinflip').disabled = false;
+        document.getElementById('p1name').style.color = 'green';
+        document.getElementById('p2name').style.color = 'black';
+        document.getElementById('coin').style.left = '20%';
+        offlineturn = 1;
+        offlinestreak = 0;
+    });
+}
+
+
+function singleflip()
+{
+    var flip = rand();
+    if (offlineturn == 1)
+    {
+        document.getElementById('p1name').style.color = 'green';
+        document.getElementById('p2name').style.color = 'black';
+        document.getElementById('coin').style.left = '20%';
+        document.getElementById('coin').style.width = '0px';
+        setTimeout(widthback, 500)
+        if (flip == 1)
+        {
+            document.getElementById("coin").src = "heads.png";
+            if (offlinestreak == 1)
+            {
+                offlinewinner(offlineturn);
+            }
+            else
+            {
+                offlinestreak = 1;
+                offlineturn = 1;
+            }
+        }
+        else
+        {
+            document.getElementById("coin").src = "tails.png";
+            offlinestreak = 0;
+            offlineturn = 2;
+            document.getElementById('coinflip').style.background = '#C0392B';
+            document.getElementById('coinflip').style.color = 'white';
+            document.getElementById('coinflip').disabled = true;
+            setTimeout(singleflip, 1000);
+        }
+    }
+    else if (offlineturn == 2)
+    {
+        document.getElementById('p1name').style.color = 'black';
+        document.getElementById('p2name').style.color = 'green';
+        document.getElementById('coin').style.left = '80%';
+        document.getElementById('coin').style.width = '0px';
+        setTimeout(widthback, 500)
+        if (flip == 1)
+        {
+            document.getElementById("coin").src = "heads.png";
+            if (offlinestreak == 1)
+            {
+                offlinewinner(offlineturn);
+            }
+            else
+            {
+                offlinestreak = 1;
+                offlineturn = 2
+                setTimeout(singleflip, 1000);
+            }
+        }
+        else
+        {
+            document.getElementById("coin").src = "tails.png";
+            offlinestreak = 0;
+            offlineturn = 1;
+            document.getElementById('coinflip').style.background = 'white';
+            document.getElementById('coinflip').style.color = 'black';
+            document.getElementById('coinflip').disabled = false;
+        }
+    }
+}
+
+function widthback()
+{
+    document.getElementById('coin').style.width = '300px';
+}
+
+window.addEventListener("beforeunload", function(e){
+    leavegame();
+}, false);

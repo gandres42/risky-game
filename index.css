@@ -1,6 +1,6 @@
 #document
 {
-    background-image: url("background.jpg");
+    background-image: url("background.png");
     background-repeat: no-repeat;
     -webkit-background-size: auto;
     background-size: auto;
@@ -15,12 +15,12 @@
     border-width: 1px;
     border-radius: 2px;
     background: white;
-    -webkit-transition-duration: .5s;
+    -webkit-transition-duration: .25s;
 }
 
 #logout
 {
-    margin-top: 10px;
+    margin-top: 5px;
     width: 180px;
     height: 40px;
     border: solid;
@@ -28,7 +28,7 @@
     border-width: 1px;
     border-radius: 2px;
     background: white;
-    -webkit-transition-duration: .5s;
+    -webkit-transition-duration: .25s;
 }
 
 #logout:hover
@@ -38,7 +38,7 @@
     border-width: 1px;
     border-radius: 2px;
     background: lightgrey;
-    -webkit-transition-duration: .5s;
+    -webkit-transition-duration: .25s;
 }
 
 #changeusername
@@ -49,7 +49,7 @@
     border-width: 1px;
     border-radius: 2px;
     margin-top: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
     padding-left: 10px;
 }
 
@@ -60,7 +60,7 @@
     border-width: 1px;
     border-radius: 2px;
     background: lightgrey;
-    -webkit-transition-duration: .5s;
+    -webkit-transition-duration: .25s;
 }
 
 #welcomepage
@@ -145,6 +145,7 @@
     background: white;
     -webkit-transition-duration: .5s;
     margin-top: 5px;
+
 }
 
 #queue:hover
@@ -156,6 +157,53 @@
     background: lightgrey;
     -webkit-transition-duration: .5s;
 }
+
+#offline
+{
+    width: 180px;
+    height: 40px;
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 2px;
+    background: white;
+    -webkit-transition-duration: .5s;
+    margin-top: 5px;
+}
+
+#offline:hover
+{
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 2px;
+    background: lightgrey;
+    -webkit-transition-duration: .5s;
+}
+
+#single
+{
+    width: 180px;
+    height: 40px;
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 2px;
+    background: white;
+    -webkit-transition-duration: .5s;
+    margin-top: 5px;
+}
+
+#single:hover
+{
+    border: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 2px;
+    background: lightgrey;
+    -webkit-transition-duration: .5s;
+}
+
 
 #username
 {
@@ -177,7 +225,7 @@
     height: 100px;
     width: 100px;
     border-radius: 50px;
-    margin-top: 60px;
+    margin-top: 20px;
     border: solid;
     border-width: 1px;
 }
