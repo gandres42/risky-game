@@ -268,16 +268,16 @@ database.ref('rooms/').on('value', function(snapshot) {
                     document.getElementById('p1name').style.color = 'green';
                     document.getElementById('p2name').style.color = 'black';
                     document.getElementById('coin').style.left = '20%';
-                    document.getElementById('coin').style.width = '0px';
-                    setTimeout(widthback, 500)
+                    //document.getElementById('coin').style.width = '0px';
+                    //setTimeout(widthback, 500)
                 }
                 else if (snapshot.val() == 'p2')
                 {
                     document.getElementById('p2name').style.color = 'green';
                     document.getElementById('p1name').style.color = 'black';
                     document.getElementById('coin').style.left = '80%';
-                    document.getElementById('coin').style.width = '0px';
-                    setTimeout(widthback, 500)
+                    //document.getElementById('coin').style.width = '0px';
+                    //setTimeout(widthback, 500)
                 }
 
                 if (snapshot.val() == player)
@@ -412,8 +412,8 @@ function offlineflip()
         document.getElementById('p1name').style.color = 'green';
         document.getElementById('p2name').style.color = 'black';
         document.getElementById('coin').style.left = '20%';
-        document.getElementById('coin').style.width = '0px';
-        setTimeout(widthback, 550)
+        //document.getElementById('coin').style.width = '0px';
+        //setTimeout(widthback, 550)
         if (flip == 1)
         {
             document.getElementById("coin").src = "heads.png";
@@ -445,8 +445,8 @@ function offlineflip()
         document.getElementById('p1name').style.color = 'black';
         document.getElementById('p2name').style.color = 'green';
         document.getElementById('coin').style.left = '80%';
-        document.getElementById('coin').style.width = '0px';
-        setTimeout(widthback, 550)
+        //document.getElementById('coin').style.width = '0px';
+        //setTimeout(widthback, 550)
         if (flip == 1)
         {
             document.getElementById("coin").src = "heads.png";
@@ -509,8 +509,8 @@ function singleflip()
         document.getElementById('p1name').style.color = 'green';
         document.getElementById('p2name').style.color = 'black';
         document.getElementById('coin').style.left = '20%';
-        document.getElementById('coin').style.width = '0px';
-        setTimeout(widthback, 500)
+        //document.getElementById('coin').style.width = '0px';
+        //setTimeout(widthback, 500)
         if (flip == 1)
         {
             document.getElementById("coin").src = "heads.png";
@@ -532,7 +532,7 @@ function singleflip()
             document.getElementById('coinflip').style.background = '#C0392B';
             document.getElementById('coinflip').style.color = 'white';
             document.getElementById('coinflip').disabled = true;
-            setTimeout(singleflip, 1000);
+            //setTimeout(singleflip, 1000);
         }
     }
     else if (offlineturn == 2)
@@ -540,8 +540,8 @@ function singleflip()
         document.getElementById('p1name').style.color = 'black';
         document.getElementById('p2name').style.color = 'green';
         document.getElementById('coin').style.left = '80%';
-        document.getElementById('coin').style.width = '0px';
-        setTimeout(widthback, 500)
+        //document.getElementById('coin').style.width = '0px';
+        //setTimeout(widthback, 500)
         if (flip == 1)
         {
             document.getElementById("coin").src = "heads.png";
@@ -553,7 +553,7 @@ function singleflip()
             {
                 offlinestreak = 1;
                 offlineturn = 2
-                setTimeout(singleflip, 1000);
+                //setTimeout(singleflip, 1000);
             }
         }
         else
