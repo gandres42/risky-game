@@ -38,7 +38,6 @@ function logout()
 
 auth.onAuthStateChanged(function(user)
 {
-    changing = false;
     if(user) {
         const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
         auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
@@ -543,4 +542,9 @@ window.onbeforeunload = function() {
     {
         leavegame();
     }
+}
+
+window.onload = function()
+{
+    changing = false;
 }
