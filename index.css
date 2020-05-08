@@ -16,6 +16,7 @@
     border-radius: 2px;
     background: white;
     -webkit-transition-duration: .25s;
+    margin-top: 10px;
 }
 
 #logout
@@ -82,7 +83,7 @@
 #gameselect
 {
     width: 600px;
-    height: 400px;
+    height: 350px;
     border: solid;
     border-color: black;
     border-width: 1px;
@@ -231,5 +232,13 @@
 }
 #instructions
 {
+    font-family: "Roboto Mono", monospace;
     line-height: 25px
 }
+
+#instructiontitle
+{
+    font-family: "Roboto Mono", monospace;
+}
+
+

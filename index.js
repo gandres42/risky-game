@@ -12,17 +12,35 @@ function googledirect()
     auth.signInWithRedirect(provider);
 }
 
+function loginAnon()
+{
+    firebase.auth().signInAnonymously();
+}
+
 function logout()
 {
-    auth.signOut()
+    const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
+    if (auth.currentUser.photoURL == null & filename != "index.html")
+    {
+        database.ref("users/" + auth.currentUser.uid).remove();
+        auth.currentUser.delete().then(function() {
+            console.log("user deleted");
+        }).catch(function(error) {
+            console.log(error);
+        });
+    }
+    else
+    {
+        auth.signOut()
+    }
 }
 
 auth.onAuthStateChanged(function(user)
 {
     if(user) {
         const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
-
-        if (filename != 'game.html' && filename != 'offlinegame.html' && filename != 'singlegame.html')
+        auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+        if (filename != 'game.html' && filename != 'offlinegame.html')
         {
             if (filename != 'gameselect.html') {
                 window.location = "gameselect.html";
@@ -36,21 +54,28 @@ auth.onAuthStateChanged(function(user)
         else if (filename == "singlegame.html")
         {
             resetlocal();
+            console.log("game set");
         }
 
-        return database.ref('users/' + user.uid + '/registered').once('value').then(function(snapshot) {
+        return database.ref('users/' + user.uid).once('value').then(function(snapshot) {
             if (snapshot.val() == null)
             {
                 database.ref('users/' + user.uid).update({
                     username: 'New Player',
-                    online: false,
-                    registered: true
+                    online: false
                 });
             }
             if (filename == 'gameselect.html')
             {
                 checkqueued();
-                document.getElementById('userimage').src = user.photoURL
+                if (user.photoURL == null)
+                {
+                    document.getElementById('userimage').src = 'anonuser.png'
+                }
+                else
+                {
+                    document.getElementById('userimage').src = user.photoURL
+                }
                 document.getElementById('userinfo').innerHTML = user.displayName;
             }
         });
@@ -94,22 +119,7 @@ database.ref('queue').on('value', function(snapshot) {
                 turn: 'p1',
                 streak: 0
             });
-
-            return database.ref('queue').once('value').then(function(snapshot)
-            {
-                database.ref('queue/' + Object.keys(snapshot.val())[0]).remove();
-                database.ref('queue/' + Object.keys(snapshot.val())[1]).remove();
-                return database.ref('roomid').once('value').then(function(snapshot)
-                {
-                    database.ref().update({
-                        roomid: snapshot.val() + 1
-                    });
-                    database.ref('users/' + currentuser.uid).update({
-                        online: snapshot.val()
-                    });
-                });
-            });
-        });
+        })
     }
 });
 
@@ -394,10 +404,10 @@ function localgame()
     window.location = "offlinegame.html";
 }
 
-function singlegame()
+/* function singlegame()
 {
     window.location = "singlegame.html";
-}
+} */
 
 function leavelocal()
 {
@@ -500,79 +510,34 @@ function resetlocal()
     });
 }
 
-
-function singleflip()
-{
-    var flip = rand();
-    if (offlineturn == 1)
-    {
-        document.getElementById('p1name').style.color = 'green';
-        document.getElementById('p2name').style.color = 'black';
-        document.getElementById('coin').style.left = '20%';
-        //document.getElementById('coin').style.width = '0px';
-        //setTimeout(widthback, 500)
-        if (flip == 1)
-        {
-            document.getElementById("coin").src = "heads.png";
-            if (offlinestreak == 1)
-            {
-                offlinewinner(offlineturn);
-            }
-            else
-            {
-                offlinestreak = 1;
-                offlineturn = 1;
-            }
-        }
-        else
-        {
-            document.getElementById("coin").src = "tails.png";
-            offlinestreak = 0;
-            offlineturn = 2;
-            document.getElementById('coinflip').style.background = '#C0392B';
-            document.getElementById('coinflip').style.color = 'white';
-            document.getElementById('coinflip').disabled = true;
-            //setTimeout(singleflip, 1000);
-        }
-    }
-    else if (offlineturn == 2)
-    {
-        document.getElementById('p1name').style.color = 'black';
-        document.getElementById('p2name').style.color = 'green';
-        document.getElementById('coin').style.left = '80%';
-        //document.getElementById('coin').style.width = '0px';
-        //setTimeout(widthback, 500)
-        if (flip == 1)
-        {
-            document.getElementById("coin").src = "heads.png";
-            if (offlinestreak == 1)
-            {
-                offlinewinner(offlineturn);
-            }
-            else
-            {
-                offlinestreak = 1;
-                offlineturn = 2
-                //setTimeout(singleflip, 1000);
-            }
-        }
-        else
-        {
-            document.getElementById("coin").src = "tails.png";
-            offlinestreak = 0;
-            offlineturn = 1;
-            document.getElementById('coinflip').style.background = 'white';
-            document.getElementById('coinflip').style.color = 'black';
-            document.getElementById('coinflip').disabled = false;
-        }
-    }
-}
-
 function widthback()
 {
     document.getElementById('coin').style.width = '300px';
 }
 
-window.addEventListener("beforeunload", function(e){
-    leavegame();
-}, false);
+function deleteAnon()
+{
+    database.ref("users/" + auth.currentUser.uid).remove();
+    auth.currentUser.delete().then(function() {
+        console.log("user deleted");
+    }).catch(function(error) {
+        console.log(error);
+    });
+}
+
+window.onbeforeunload = function() {
+    const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
+    if (auth.currentUser.photoURL == null & filename != "index.html" & filename != "game.html" & filename != "gameselect.html")
+    {
+        database.ref("users/" + auth.currentUser.uid).remove();
+        auth.currentUser.delete().then(function() {
+            console.log("user deleted");
+        }).catch(function(error) {
+            console.log(error);
+        });
+    }
+    else
+    {
+        leavegame();
+    }
+}

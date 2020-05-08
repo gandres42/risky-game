@@ -18,6 +18,19 @@
     border-radius: 3px;
 }
 
+#offlinemaingame
+{
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+    background: white;
+    width: calc(100% - 28px);
+    height: calc(100% - 28px);
+    position: absolute;
+    padding: 5px;
+    border-radius: 3px;
+}
+
 #p1name
 {
     font-family: "Roboto Mono";
