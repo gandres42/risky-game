@@ -540,7 +540,10 @@ window.onbeforeunload = function() {
     }
     else
     {
-        leavegame();
+        if (changing == false)
+        {
+            leavegame();
+        }
     }
 }
 
