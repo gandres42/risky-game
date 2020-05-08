@@ -6,6 +6,7 @@ var player;
 var offlineturn = 1;
 var offlinestreak = 0;
 var username;
+var changing = false;
 
 function googledirect()
 {
@@ -37,12 +38,14 @@ function logout()
 
 auth.onAuthStateChanged(function(user)
 {
+    changing = false;
     if(user) {
         const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
         auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
         if (filename != 'game.html' && filename != 'offlinegame.html')
         {
             if (filename != 'gameselect.html') {
+                changing = true;
                 window.location = "gameselect.html";
             }
             currentuser = user;
@@ -85,6 +88,7 @@ auth.onAuthStateChanged(function(user)
         const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
         if(filename != 'index.html' && filename != 'game.html')
         {
+            changing = true;
             window.location = "index.html";
         }
     }
@@ -136,12 +140,14 @@ database.ref('users/').on('value', function(snapshot) {
                 database.ref('users/' + uid2).update({
                     online: room
                 });
+                changing = true;
                 window.location = 'game.html';
             });
         });
     }
     else if (Object.values(snapshot.val())[Object.keys(snapshot.val()).indexOf(auth.currentUser.uid)].online == false && filename != 'gameselect.html' && filename != 'offlinegame.html' && filename != 'singlegame.html')
     {
+        changing = true;
         window.location = 'gameselect.html';
     }
     return firebase.database().ref('users/' + auth.currentUser.uid + '/username').once('value').then(function(snapshot)
@@ -401,16 +407,13 @@ function again()
 
 function localgame()
 {
+    changing = true;
     window.location = "offlinegame.html";
 }
 
-/* function singlegame()
-{
-    window.location = "singlegame.html";
-} */
-
 function leavelocal()
 {
+    changing = true;
     window.location = "gameselect.html";
 }
 
@@ -527,7 +530,7 @@ function deleteAnon()
 
 window.onbeforeunload = function() {
     const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
-    if (auth.currentUser.photoURL == null & filename != "index.html" & filename != "game.html" & filename != "gameselect.html")
+    if (auth.currentUser.photoURL == null & changing == false)
     {
         database.ref("users/" + auth.currentUser.uid).remove();
         auth.currentUser.delete().then(function() {
