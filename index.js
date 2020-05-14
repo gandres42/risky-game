@@ -56,7 +56,6 @@ auth.onAuthStateChanged(function(user)
         else if (filename == "singlegame.html")
         {
             resetlocal();
-            console.log("game set");
         }
 
         return database.ref('users/' + user.uid).once('value').then(function(snapshot) {
@@ -69,17 +68,21 @@ auth.onAuthStateChanged(function(user)
             }
             if (filename == 'gameselect.html')
             {
-                checkqueued();
-                if (user.photoURL == null)
-                {
-                    document.getElementById('userimage').src = 'anonuser.png'
-                }
-                else
-                {
-                    document.getElementById('userimage').src = user.photoURL
-                }
-                document.getElementById('userinfo').innerHTML = user.displayName;
+                return database.ref('users/' + user.uid).once('value').then(function(snapshot) {
+                    checkqueued();
+                    document.getElementById('changeusername').value = snapshot.val().username
+                    if (user.photoURL == null)
+                    {
+                        document.getElementById('userimage').src = 'anonuser.png'
+                    }
+                    else
+                    {
+                        document.getElementById('userimage').src = user.photoURL
+                    }
+                    document.getElementById('userinfo').innerHTML = user.displayName;
+                });
             }
+            changing = false;
         });
     }
     else
@@ -90,6 +93,7 @@ auth.onAuthStateChanged(function(user)
             changing = true;
             window.location = "index.html";
         }
+        changing = false;
     }
 });
 
@@ -110,48 +114,24 @@ function queue()
 
 }
 
-database.ref('queue').on('value', function(snapshot) {
-    var queue = Object.values(snapshot.val());
-    if (queue[0] == currentuser.uid && queue.length >= 2)
-    {
-        return database.ref('roomid').once('value').then(function(snapshot)
-        {
-            database.ref('rooms/' + snapshot.val()).set({
-                [auth.currentUser.uid]: 'p1',
-                [queue[1]]: 'p2',
-                turn: 'p1',
-                streak: 0
-            });
-        })
-    }
-});
-
 database.ref('users/').on('value', function(snapshot) {
     const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
-    if (Object.values(snapshot.val())[Object.keys(snapshot.val()).indexOf(auth.currentUser.uid)].online != false && filename != 'game.html')
+    return database.ref('users/' + auth.currentUser.uid).once('value').then(function(snapshot)
     {
-        return database.ref('users/' + currentuser.uid + '/online').once('value').then(function(snapshot)
+        if (snapshot.val().online == false && filename != 'gameselect.html' && filename != 'offlinegame.html' && filename != 'singlegame.html')
         {
-            var room = snapshot.val();
-            return database.ref('rooms/' + snapshot.val()).once('value').then(function(snapshot)
+            changing = true;
+            window.location = 'gameselect.html';
+        }
+        else if (snapshot.val().online != false && filename != 'game.html')
+        {
+            changing = true;
+            window.location = 'game.html';
+            return firebase.database().ref('users/' + auth.currentUser.uid + '/username').once('value').then(function(snapshot)
             {
-                var uid2 = Object.keys(snapshot.val())[(1 - Object.keys(snapshot.val()).indexOf(currentuser.uid))];
-                database.ref('users/' + uid2).update({
-                    online: room
-                });
-                changing = true;
-                window.location = 'game.html';
+                document.getElementById('changeusername').value = snapshot.val()
             });
-        });
-    }
-    else if (Object.values(snapshot.val())[Object.keys(snapshot.val()).indexOf(auth.currentUser.uid)].online == false && filename != 'gameselect.html' && filename != 'offlinegame.html' && filename != 'singlegame.html')
-    {
-        changing = true;
-        window.location = 'gameselect.html';
-    }
-    return firebase.database().ref('users/' + auth.currentUser.uid + '/username').once('value').then(function(snapshot)
-    {
-        document.getElementById('changeusername').value = snapshot.val()
+        }
     });
 });
 
@@ -336,9 +316,16 @@ database.ref('rooms/').on('value', function(snapshot) {
 
 function changeusername()
 {
-    database.ref('users/' + auth.currentUser.uid).update({
-        username: document.getElementById('changeusername').value
-    });
+    if (document.getElementById('changeusername').value.length < 21)
+    {
+        database.ref('users/' + auth.currentUser.uid).update({
+            username: document.getElementById('changeusername').value
+        });
+    }
+    else
+    {
+        alert("That username is too long, please pick a name under 21 characters");
+    }
 }
 
 function exitqueue()
@@ -424,8 +411,6 @@ function offlineflip()
         document.getElementById('p1name').style.color = 'green';
         document.getElementById('p2name').style.color = 'black';
         document.getElementById('coin').style.left = '20%';
-        //document.getElementById('coin').style.width = '0px';
-        //setTimeout(widthback, 550)
         if (flip == 1)
         {
             document.getElementById("coin").src = "heads.png";
@@ -457,8 +442,6 @@ function offlineflip()
         document.getElementById('p1name').style.color = 'black';
         document.getElementById('p2name').style.color = 'green';
         document.getElementById('coin').style.left = '80%';
-        //document.getElementById('coin').style.width = '0px';
-        //setTimeout(widthback, 550)
         if (flip == 1)
         {
             document.getElementById("coin").src = "heads.png";
@@ -512,11 +495,6 @@ function resetlocal()
     });
 }
 
-function widthback()
-{
-    document.getElementById('coin').style.width = '300px';
-}
-
 function deleteAnon()
 {
     database.ref("users/" + auth.currentUser.uid).remove();
@@ -528,15 +506,9 @@ function deleteAnon()
 }
 
 window.onbeforeunload = function() {
-    const filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
     if (auth.currentUser.photoURL == null & changing == false)
     {
-        database.ref("users/" + auth.currentUser.uid).remove();
-        auth.currentUser.delete().then(function() {
-            console.log("user deleted");
-        }).catch(function(error) {
-            console.log(error);
-        });
+        deleteAnon();
     }
     else
     {
@@ -549,5 +521,5 @@ window.onbeforeunload = function() {
 
 window.onload = function()
 {
-    changing = false;
+
 }
