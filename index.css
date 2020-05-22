@@ -3,7 +3,7 @@
     background-image: url("background.png");
     background-repeat: no-repeat;
     -webkit-background-size: auto;
-    background-size: auto;
+    background-size: 100%;
 }
 
 #login
