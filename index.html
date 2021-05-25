@@ -1,32 +1,62 @@
 <!DOCTYPE html>
-<html lang="en" id="document">
+<link rel="preconect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Inconsolata&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="index.css">
-<head>
-    <meta charset="UTF-8">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
-    <title>Shane's Risky Game</title>
-</head>
-
-<div id="welcomepage">
-    <div id="welcomelogin">
-        <h1 id="title">Shane's</h1>
-        <h1 id="title">Risky Game</h1>
-        <button id="login" onclick="googledirect()">Sign in with Google</button>
-        <button id="login" onclick="loginAnon()">Play Without Account</button>
+<script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous">
+</script>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+        <title>Shane's Risky Game</title>
+    </head>
+<body id="background">
+    <!-- Main Menu -->
+    <div class="container" style="width: 500px; transform: translate(-50%, -50%); left: 50%; top: 50%; padding: 0">
+        <h1 class="title" style="font-size: xxx-large; margin-bottom: 0px">Shane's Risky Game</h1>
+        <p style="font-family: Inconsolata; font-size: large; margin-top: 5px">Version 2.0</p>
+        <input id="username" placeholder="enter name">
+        <br>
+        <button id="queue" onclick="queue(document.getElementById('username').value)" style="margin-top: 5px; margin-bottom: 5px">Find Game</button>
     </div>
-    <div id="welcomeinstructions">
-        <p id="instructiontitle"><b>How to Play</b></p>
+
+    <!-- Game page -->
+    <div id="game" class="container" style="visibility: hidden; left: 10px; top: 10px; right: 10px; bottom: 10px;">
+        <h3 id="p2name" class="title" style="position: absolute; left: 20px; top: 10px">Player 1</h3>
+        <h3 id="p1name" class="title" style="position: absolute; right: 20px; top: 10px" >Player 2</h3>
+        <div id="coin" style="width: 30vh; height: 30vh; position: absolute; top: 50%; transform: translateY(-50%); animation-name: slide; animation-duration: 3s">
+            <img id="coinpic" src="heads.png" style="width: 100%">
+        </div>
+        <button id="play" onclick="play()" style="color: white; background-color: #bd0000;">Play</button>
+        <button id="exit" onclick="leave(true);">Leave Game</button>
     </div>
-</div>
 
+    <!-- Opaque background to display behind popup messages -->
+    <div id="greybackground" style="visibility: hidden; left: 0px; top: 0px; right: 0px; bottom: 0px; background-color: black; position:absolute; opacity: .5">
 
-<body>
-<!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="https://www.gstatic.com/firebasejs/7.2.3/firebase.js"></script>
+    </div>
 
-<!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <!-- Dialogue for opponent has left match -->
+    <div id="left" class="container" style="transform: translate(-50%, -50%); left: 50%; top: 50%; width: 400px; visibility: hidden">
+        <h3 class="title">The opponent has left the match</h3>
+        <button onclick="document.getElementById('left').style.visibility = 'hidden'; document.getElementById('greybackground').style.visibility = 'hidden';" style="margin-bottom: 15px">Understandable, have a nice day</button>
+    </div>
 
+    <!-- Dialogue for win condition -->
+    <div id="win" class="container" style="transform: translate(-50%, -50%); left: 50%; top: 50%; width: 400px; visibility: hidden">
+        <h3 class="title" id="winner">Winner: </h3>
+        <button onclick="leave(true);" style="margin-bottom: 15px">Leave Match</button>
+        <button id="again" onclick="playagain()" style="margin-bottom: 15px">Play Again</button>
+    </div>
+</body>
+
+<!-- The core Firebase JS SDK is always requi#bd0000 and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use https://firebase.google.com/docs/web/setup#available-libraries -->
 <script>
     // Your web app's Firebase configuration
     var firebaseConfig = {
@@ -38,13 +68,303 @@
         messagingSenderId: "289562568492",
         appId: "1:289562568492:web:b1f7d56de79647cb672e89"
     };
+
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    var provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({
-        prompt: 'select_account'
-    });
+
+    //Only needed for auth use, not realtime db
+    //var provider = new firebase.auth.GoogleAuthProvider();
+    //provider.setCustomParameters({
+    //    prompt: 'select_account'
+    //});
 </script>
-</body>
 </html>
-<script src="index.js"></script>
+<script>
+    const database = firebase.database();
+    var pid;
+    var queued = false;
+    var room;
+    var pagain = false;
+
+    //document.getElementById("username").value = "";
+    //queue("");
+
+    function playagain()
+    {
+        if (pagain == false)
+        {
+            pagain = true;
+
+            document.getElementById("again").innerHTML = "Waiting...";
+            document.getElementById("again").style.backgroundColor = "grey";
+
+            return database.ref('rooms/' + room + '/pagain').once('value', (snapshot) => {
+                if (snapshot.val() != null)
+                {
+                    database.ref('rooms/' + room).update({
+                        pagain: 2
+                    });
+                    pagainfirst = false;
+                }
+                else
+                {
+                    database.ref('rooms/' + room).update({
+                        pagain: 1
+                    });
+                    pagainfirst = true;
+                }
+            });
+        }
+    }
+
+
+    function queue(username)
+    {
+        queued = !queued;
+
+        if (queued)
+        {
+            document.getElementById('queue').style.backgroundColor = '#bd0000';
+            document.getElementById('queue').style.color = 'white';
+            database.ref('pid').once('value', (snapshot) => {
+                pid = snapshot.val();
+                database.ref('/').update({
+                    pid: snapshot.val() + 1
+                });
+                database.ref('queue').update({
+                    [pid]: username
+                });
+            });
+        }
+        else
+        {
+            document.getElementById('queue').style.backgroundColor = 'white';
+            document.getElementById('queue').style.color = 'black';
+            database.ref('queue/' + pid).remove();
+            pid = null;
+        }
+    }
+
+    database.ref('queue').on('value', (snapshot) => {
+        if (snapshot.val() !== null)
+        {
+            var keys = Object.keys(snapshot.val());
+            var values = Object.values(snapshot.val());
+
+            if (keys.length >= 2 && queued && keys[0] == pid)
+            {
+                database.ref("rooms/" + keys[0] + keys[1]).update({
+                    coin: "na",
+                    turn: keys[0],
+                    [keys[0]]: values[0],
+                    [keys[1]]: values[1]
+                });
+                database.ref("queue").update({
+                    [keys[0]]: null,
+                    [keys[1]]: null
+                });
+
+            }
+        }
+    });
+
+    database.ref('rooms').on('value', (snapshot) => {
+        if (room == null)
+        {
+            var keys = Object.keys(snapshot.val());
+
+            for (i = 0; i < keys.length; i++)
+            {
+                if (parseInt(keys[i].substr(0, 5)) === pid || parseInt(keys[i].substr(5, 10)) === pid)
+                {
+                    room = keys[i];
+                    queued = false;
+                    database.ref('rooms/' + room + '/turn').once('value', (snapshot) => {
+                        if (parseInt(snapshot.val()) == pid)
+                        {
+                            document.getElementById('play').style.backgroundColor = 'white';
+                            document.getElementById('play').style.color = 'black';
+                            document.getElementById('coin').style.left = '10px';
+                        }
+                        else
+                        {
+                            document.getElementById('play').style.backgroundColor = '#bd0000';
+                            document.getElementById('play').style.color = 'white';
+                            document.getElementById('coin').style.right = "10px";
+                        }
+                    });
+
+                    var othernum;
+
+                    database.ref('rooms/' + room + '/' + keys[i].substr(0, 5)).once('value', (snapshot) => {
+                        if (parseInt(keys[i].substr(0, 5)) == pid)
+                        {
+                            document.getElementById('p2name').innerHTML = snapshot.val();
+                            othernum = 1;
+                        }
+                        else if (parseInt(keys[i].substr(5, 10)) == pid)
+                        {
+                            document.getElementById('p1name').innerHTML = snapshot.val();
+                            othernum = 2;
+                        }
+                    });
+
+                    database.ref('rooms/' + room + '/' + keys[i].substr(5, 10)).once('value', (snapshot) => {
+                        if (parseInt(keys[i].substr(0, 5)) != pid)
+                        {
+                            document.getElementById('p' + othernum + 'name').innerHTML = snapshot.val();
+                        }
+                        else if (parseInt(keys[i].substr(5, 10)) != pid)
+                        {
+                            document.getElementById('p' + othernum + 'name').innerHTML = snapshot.val();
+                        }
+                    });
+
+                    document.getElementById('game').style.visibility = 'visible';
+                    document.getElementById('queue').style.color = 'black';
+                    document.getElementById('queue').style.backgroundColor = 'white';
+                }
+            }
+        }
+        else
+        {
+            database.ref('rooms/' + room).once('value', (snapshot) => {
+                if (snapshot.val() == null && room != null) {
+                    leave(false);
+                }
+            });
+
+            database.ref('rooms/' + room + '/turn').once('value', (snapshot) => {
+                if (parseInt(snapshot.val()) == pid)
+                {
+                    document.getElementById('play').style.backgroundColor = 'white';
+                    document.getElementById('play').style.color = 'black';
+                    document.getElementById('coin').style.left = '10px';
+                }
+                else
+                {
+                    document.getElementById('play').style.backgroundColor = '#bd0000';
+                    document.getElementById('play').style.color = 'white';
+                    document.getElementById('coin').style.left = 'calc(100% - 30vh - 10px)';
+                }
+            });
+
+            database.ref('rooms/' + room + '/coin').once('value', (snapshot) => {
+                if (snapshot.val() == 2)
+                {
+                    database.ref('rooms/' + room + '/turn').once('value', (snapshot) => {
+                        database.ref('rooms/' + room + '/' + snapshot.val()).once('value', (snapshot) => {
+                            document.getElementById('win').style.visibility = 'visible';
+                            document.getElementById('winner').innerHTML = "Winner: " + snapshot.val();
+                            document.getElementById('greybackground').style.visibility = 'visible';
+
+                        });
+                    });
+                }
+                else if (snapshot.val() == 1)
+                {
+                    document.getElementById('coinpic').src = 'heads.png';
+                }
+                else if (snapshot.val() == 0)
+                {
+                    document.getElementById('coinpic').src = 'tails.png';
+                }
+            });
+
+            database.ref('rooms/' + room + '/pagain').once('value', (snapshot) => {
+                if (snapshot.val() == 2)
+                {
+                    document.getElementById("again").innerHTML = "Play Again";
+                    document.getElementById("again").style.backgroundColor = "white";
+                    document.getElementById('win').style.visibility = 'hidden';
+                    document.getElementById('greybackground').style.visibility = 'hidden';
+
+                    if (pagainfirst == false) {
+                        database.ref('rooms/' + room).update({
+                            coin: 0,
+                            pagain: null
+                        });
+                    }
+                }
+            });
+        }
+    });
+
+    function getRandomNumber(min, max)
+    {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    //sets coin values
+    function play()
+    {
+        database.ref('rooms/' + room + '/turn').once('value', (snapshot) => {
+            if (snapshot.val() == pid)
+            {
+                database.ref('rooms/' + room + '/coin').once('value', (snapshot) => {
+                    //flip coin
+                    var flip = getRandomNumber(0, 1);
+
+                    //win condition
+                    if (flip == 1 && parseInt(snapshot.val()) == 1)
+                    {
+                        database.ref('rooms/' + room ).update({
+                            coin: 2
+                        });
+                    }
+                    //enter bonus round
+                    else if (flip == 1)
+                    {
+                        database.ref('rooms/' + room ).update({
+                            coin: flip
+                        });
+                    }
+                    //go to other player
+                    else
+                    {
+                        var p2;
+                        if (parseInt(room.substr(0, 5)) == pid)
+                        {
+                            p2 = room.substr(5, 10);
+                        }
+                        else
+                        {
+                            p2 = room.substr(0, 5);
+                        }
+
+                        database.ref('rooms/' + room).update({
+                            coin: flip,
+                            turn: p2
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    //removes player on page leave to prevent database clutter
+    window.onbeforeunload = function(){
+        sessionStorage.clear();
+        database.ref('queue/' + pid).remove();
+        database.ref('rooms/' + room).remove();
+    }
+
+    function leave(initiator)
+    {
+        document.getElementById('win').style.visibility = 'hidden';
+        document.getElementById('greybackground').style.visibility = 'hidden';
+        document.getElementById("again").innerHTML = "Play Again";
+        document.getElementById("again").style.backgroundColor = "white";
+
+        var temproom = room;
+        room = null;
+        if (initiator == false)
+        {
+            document.getElementById('greybackground').style.visibility = 'visible';
+            document.getElementById('left').style.visibility = 'visible';
+        }
+        database.ref('queue/' + pid).remove();
+        database.ref('rooms/' + temproom).remove();
+        document.getElementById('game').style.visibility = 'hidden';
+    }
+</script>
